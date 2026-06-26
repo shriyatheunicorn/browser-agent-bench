@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, Clock, Target, Cpu, Trophy, Activity } from "lucide-react"
+import { ArrowUpRight, Clock, Target, Cpu, Trophy, Activity, ChevronDown } from "lucide-react"
 import {
   PROVIDERS,
   GROUPS,
@@ -193,7 +193,7 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
       </section>
 
       {/* Full matrix */}
-      <TaskMatrix tasks={tasks} model={model} />
+      <TaskMatrix tasks={tasks} models={models} defaultModel={model} />
     </main>
   )
 }
@@ -575,15 +575,39 @@ function ResultChip({ status, time }: { status: string; time: number | null }) {
   )
 }
 
-function TaskMatrix({ tasks, model }: { tasks: BenchTask[]; model: ModelLabel }) {
+function TaskMatrix({
+  tasks,
+  models,
+  defaultModel,
+}: {
+  tasks: BenchTask[]
+  models: string[]
+  defaultModel: ModelLabel
+}) {
+  const [model, setModel] = useState<ModelLabel>(defaultModel)
   const order: ProviderId[] = ["browserbase", "browser-use", "browserless"]
   return (
     <section className="mt-12">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Full task matrix</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Every task, every provider, for <span className="font-mono text-foreground">{model}</span>.
+          <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+            Every task, every provider, for
+            <span className="relative inline-flex items-center">
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                aria-label="Select model for task matrix"
+                className="appearance-none rounded-md border border-border bg-background py-1 pl-2 pr-7 font-mono text-xs font-medium text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                {models.map((m) => (
+                  <option key={m} value={m}>
+                    {shortModel(m)}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-muted-foreground" />
+            </span>
           </p>
         </div>
         <Link href="/tasks" className="hidden items-center gap-1 text-sm font-medium text-primary hover:underline sm:flex">
