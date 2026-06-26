@@ -344,9 +344,9 @@ function Hero({
         </p>
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} href="/tasks" sub="Try the tasks" />
-        <HeroStat icon={Cpu} label="Models" value={String(models.length)} sub="evaluated" />
-        <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
+        <HeroStat icon={Target} label="Suites" value={String(tasks.length)} href="/tasks" sub="suites" />
+        <HeroStat icon={Cpu} label="Models" value={String(models.length)} sub="models" />
+        <HeroStat icon={Activity} label="Agents" value="3" sub="agents" />
       </div>
     </section>
   )
