@@ -42,7 +42,7 @@ const TRIALS = numberEnv("TRIALS", 1);
 const CONCURRENCY = numberEnv("CONCURRENCY", 1);
 const POLL_MS = numberEnv("POLL_MS", 5000);
 const TIMEOUT_MS = numberEnv("TIMEOUT_MS", 10 * 60 * 1000);
-const SEND_MODEL_PARAM = boolEnv("SEND_MODEL_PARAM", false);
+const SEND_MODEL_PARAM = boolEnv("SEND_MODEL_PARAM", true);
 const BROWSERBASE_SEND_MODEL_PARAM = boolEnv("BROWSERBASE_SEND_MODEL_PARAM", SEND_MODEL_PARAM);
 const BROWSER_USE_SEND_MODEL_PARAM = boolEnv("BROWSER_USE_SEND_MODEL_PARAM", SEND_MODEL_PARAM);
 const BROWSERLESS_AGENT_MODE = process.env.BROWSERLESS_AGENT_MODE ?? "openai-responses";
@@ -225,7 +225,9 @@ async function runBrowserbaseTrial(task, model, trial, rowBase) {
           ...(BROWSERBASE_AGENT_CONFIG_ID ? { configId: BROWSERBASE_AGENT_CONFIG_ID } : {}),
         };
   if (BROWSERBASE_SEND_MODEL_PARAM && rowBase.requestedModel) {
-    requestBody[BROWSERBASE_MODEL_PARAM_NAME] = rowBase.requestedModel;
+    if (!isProviderDefaultModel(rowBase.provider, rowBase.requestedModel)) {
+      requestBody[BROWSERBASE_MODEL_PARAM_NAME] = rowBase.requestedModel;
+    }
   }
 
   const startRaw = await startBrowserbaseRun(requestBody);
@@ -1116,7 +1118,7 @@ function readModels() {
     return modelLabels.map((label) => ({ label }));
   }
 
-  const singleLabel = process.env.MODEL_LABEL ?? process.env.MODEL ?? "browserbase-default";
+  const singleLabel = process.env.MODEL_LABEL ?? process.env.MODEL ?? "default";
   return [{ label: singleLabel }];
 }
 
@@ -1167,6 +1169,10 @@ function getProviderModel(model, provider) {
   }
 
   return normalizeOptionalModel(model.value ?? model.label);
+}
+
+function isProviderDefaultModel(provider, value) {
+  return provider === "browserbase" && ["default", "browserbase-default"].includes(String(value ?? "").toLowerCase());
 }
 
 function normalizeOptionalModel(value) {

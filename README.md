@@ -30,12 +30,15 @@ cd /Users/shriya/conductor/workspaces/Quickstart/chennai/evals/browserbase-agent
 npm run eval
 ```
 
-By default this runs all tasks once with `PROVIDERS=browserbase` and `MODEL_LABEL=browserbase-default`.
+By default this runs Browserbase without a model field, so Browserbase chooses its default model. Explicit model parameters are sent by default when a models file provides provider-specific values such as `browserbaseModel`, `browserUseModel`, or `browserlessModel`.
 
 ## Run Selected Tasks
 
 ```bash
-TASK_IDS=reaction-time,dropdown-form MODEL_LABEL=browserbase-default npm run eval
+TASK_IDS=reaction-time,dropdown-form \
+MODELS_FILE=./models.comparable.json \
+PROVIDERS=browserbase \
+npm run eval
 ```
 
 Run Browser Use on the same taskset:
@@ -47,7 +50,10 @@ PROVIDERS=browser-use TASK_IDS=reaction-time MODEL_LABEL=browser-use-default npm
 Compare Browserbase and Browser Use on the same selected tasks:
 
 ```bash
-PROVIDERS=browserbase,browser-use TASK_IDS=reaction-time,dropdown-form MODEL_LABEL=default npm run eval
+PROVIDERS=browserbase,browser-use \
+TASK_IDS=reaction-time,dropdown-form \
+MODELS_FILE=./models.comparable.json \
+npm run eval
 ```
 
 Compare Browserbase, Browser Use, and Browserless on the same selected tasks:
@@ -56,7 +62,6 @@ Compare Browserbase, Browser Use, and Browserless on the same selected tasks:
 PROVIDERS=browserbase,browser-use,browserless \
 TASK_IDS=reaction-time,dropdown-form \
 MODELS_FILE=./models.comparable.json \
-SEND_MODEL_PARAM=true \
 npm run eval
 ```
 
@@ -85,7 +90,10 @@ SELF_TEST=true npm run eval
 Run only Human Benchmark tasks:
 
 ```bash
-TASK_GROUPS=human-benchmark MODEL_LABEL=browserbase-default npm run eval
+TASK_GROUPS=human-benchmark \
+MODELS_FILE=./models.comparable.json \
+PROVIDERS=browserbase \
+npm run eval
 ```
 
 ## Compare Model Labels
@@ -107,7 +115,6 @@ For the originally requested model set, use:
 ```bash
 MODELS_FILE=./models.initial.json \
 PROVIDERS=browserbase,browser-use \
-SEND_MODEL_PARAM=true \
 npm run eval
 ```
 
@@ -118,7 +125,6 @@ For a clean documented overlap between both providers:
 ```bash
 MODELS_FILE=./models.comparable.json \
 PROVIDERS=browserbase,browser-use,browserless \
-SEND_MODEL_PARAM=true \
 npm run eval
 ```
 
@@ -129,16 +135,15 @@ For the Browserbase + Browserless overlap where Browser Use should be N/A:
 ```bash
 MODELS_FILE=./models.browserbase-browserless.json \
 PROVIDERS=browserbase,browser-use,browserless \
-SEND_MODEL_PARAM=true \
 npm run eval
 ```
 
 That overlap currently includes `openai/gpt-5.4` and `openai/gpt-5.4-mini`. The `browserUseModel` values are explicitly `null`, so Browser Use rows are recorded as skipped and rendered as `n/a` in comparison reports.
 
-The current Browserbase demo endpoint used by this suite exposes `agentMode`, but not the underlying LLM model in its start response. This suite always records `modelLabel` for comparison. If your Browserbase endpoint accepts a model field in the request body, set:
+The current Browserbase demo endpoint used by this suite exposes `agentMode`, but not the underlying LLM model in its start response. This suite always records `modelLabel` for comparison. When a models file provides `browserbaseModel`, the harness sends it as the Browserbase model field by default. Override the field name when needed:
 
 ```bash
-SEND_MODEL_PARAM=true MODEL_PARAM_NAME=model MODEL_LABELS=google/gemini-3-flash-preview npm run eval
+MODEL_PARAM_NAME=model MODELS_FILE=./models.comparable.json PROVIDERS=browserbase npm run eval
 ```
 
 ## Browserbase Agent Runs API
@@ -271,7 +276,7 @@ npm run compare -- --results ./results --output ./reports/latest-provider-compar
 - `MODEL_LABEL` - one model label for this run.
 - `MODEL_LABELS` - comma-separated model labels.
 - `MODELS_FILE` - JSON array of strings or objects with `label`.
-- `SEND_MODEL_PARAM` - set to `true` to send model values to both providers.
+- `SEND_MODEL_PARAM` - sends explicit model values by default. Set to `false` to omit provider model fields.
 - `BROWSERBASE_SEND_MODEL_PARAM` - override model sending for Browserbase.
 - `BROWSER_USE_SEND_MODEL_PARAM` - override model sending for Browser Use.
 - `BROWSERBASE_MODEL_PARAM_NAME` - Browserbase request field name. Defaults to `model`.
