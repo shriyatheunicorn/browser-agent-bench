@@ -68,13 +68,9 @@
   }
 }
 
-/* Orange highlighter span, like browserbase.com headings */
+/* Browserbase orange accent text */
 .bb-mark {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-  padding: 0 0.18em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  color: var(--primary);
 }
 
 @keyframes growBar {
