@@ -326,7 +326,7 @@ function Hero({
       </h1>
       <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
         A code-graded suite of {tasks.length} browser tasks run across providers and models. No self-reported success,
-        no LLM judge — every pass is verified by a deterministic grader.
+        no LLM judge. Every pass is verified by a deterministic grader.
       </p>
       {generatedLabel && (
         <p className="mt-3 font-mono text-xs text-muted-foreground">
