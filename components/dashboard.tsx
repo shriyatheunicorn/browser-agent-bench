@@ -143,6 +143,9 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
         })}
       </section>
 
+      {/* Per-model leaderboard */}
+      <ModelLeaderboard tasks={tasks} models={models} activeModel={model} onPickModel={setModel} />
+
       {/* Browserbase strengths */}
       <BrowserbaseStrengths model={model} groups={bbGroups} stats={bbStats} />
 
@@ -186,6 +189,118 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
       {/* Full matrix */}
       <TaskMatrix tasks={tasks} model={model} />
     </main>
+  )
+}
+
+function shortModel(m: string) {
+  return m.includes("/") ? m.split("/").slice(1).join("/") : m
+}
+
+function ModelLeaderboard({
+  tasks,
+  models,
+  activeModel,
+  onPickModel,
+}: {
+  tasks: BenchTask[]
+  models: string[]
+  activeModel: ModelLabel
+  onPickModel: (m: ModelLabel) => void
+}) {
+  // Build a row per (model, provider) that actually has data, then rank by
+  // pass rate (ties broken by faster average time).
+  const rows = useMemo(() => {
+    const out: {
+      model: string
+      provider: ProviderId
+      passed: number
+      total: number
+      rate: number
+      avgTimeSec: number
+    }[] = []
+    for (const m of models) {
+      for (const p of PROVIDERS) {
+        if (!providerHasModel(tasks, p.id, m)) continue
+        const s = statsFor(tasks, p.id, m)
+        out.push({ model: m, provider: p.id, ...s })
+      }
+    }
+    return out.sort((a, b) => b.rate - a.rate || a.avgTimeSec - b.avgTimeSec)
+  }, [tasks, models])
+
+  if (rows.length === 0) return null
+
+  const topRate = rows[0].rate
+
+  return (
+    <section className="mt-12">
+      <div className="flex flex-col gap-1">
+        <span className="mono-label">Per-model results</span>
+        <h2 className="text-2xl font-semibold tracking-tight">Model leaderboard</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+          Every provider and model combination ranked by deterministic pass rate across all {tasks.length} tasks. Click a
+          row to load that model into the views below.
+        </p>
+      </div>
+
+      <div className="mt-5 overflow-hidden rounded-xl border border-border bg-card">
+        <div className="hidden grid-cols-[2.5rem_1fr_1fr_8rem_5rem_5rem] gap-3 border-b border-border bg-muted/40 px-4 py-2.5 font-mono text-[11px] uppercase tracking-wider text-muted-foreground sm:grid">
+          <span>#</span>
+          <span>Provider</span>
+          <span>Model</span>
+          <span>Pass rate</span>
+          <span className="text-right">Solved</span>
+          <span className="text-right">Avg</span>
+        </div>
+        <ul>
+          {rows.map((r, i) => {
+            const meta = PROVIDER_META[r.provider]
+            const isBB = r.provider === "browserbase"
+            const isActive = r.model === activeModel
+            const isLeader = r.rate === topRate
+            return (
+              <li key={`${r.model}-${r.provider}`}>
+                <button
+                  onClick={() => onPickModel(r.model)}
+                  className={`grid w-full grid-cols-2 items-center gap-x-3 gap-y-2 px-4 py-3 text-left transition-colors sm:grid-cols-[2.5rem_1fr_1fr_8rem_5rem_5rem] ${
+                    isActive ? "bg-primary/[0.04]" : "hover:bg-muted/40"
+                  } ${i > 0 ? "border-t border-border" : ""}`}
+                >
+                  <span className="hidden font-mono text-sm tabular-nums text-muted-foreground sm:block">
+                    {i + 1}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: meta.varColor }} />
+                    <span className={`text-sm font-medium ${isBB ? "text-primary" : "text-foreground"}`}>
+                      {meta.name}
+                    </span>
+                    {isLeader && (
+                      <Trophy className="h-3.5 w-3.5 text-primary" aria-label="Top pass rate" />
+                    )}
+                  </span>
+                  <span className="truncate font-mono text-xs text-muted-foreground">{shortModel(r.model)}</span>
+                  <span className="col-span-2 flex items-center gap-2 sm:col-span-1">
+                    <span className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                      <span
+                        className="block h-full rounded-full"
+                        style={{ width: pct(r.rate), backgroundColor: meta.varColor }}
+                      />
+                    </span>
+                    <span className="w-9 text-right font-mono text-sm font-semibold tabular-nums">{pct(r.rate)}</span>
+                  </span>
+                  <span className="text-right font-mono text-sm tabular-nums text-muted-foreground">
+                    {r.passed}/{r.total}
+                  </span>
+                  <span className="text-right font-mono text-sm tabular-nums text-muted-foreground">
+                    {r.avgTimeSec > 0 ? `${r.avgTimeSec.toFixed(1)}s` : "—"}
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </section>
   )
 }
 
