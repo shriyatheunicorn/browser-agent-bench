@@ -29,7 +29,11 @@ export interface BenchData {
   sourceFile: string | null
 }
 
-export const MODELS = ["default", "openai/gpt-5.4-mini"] as const
+export const MODELS = [
+  "openai/gpt-5.4-mini",
+  "anthropic/claude-opus-4-6",
+  "anthropic/claude-sonnet-4-6",
+] as const
 export type ModelLabel = string
 
 export const PROVIDERS: { id: ProviderId; name: string; color: string; blurb: string }[] = [

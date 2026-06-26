@@ -78,7 +78,7 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
                   model === m ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {m}
+                {shortModel(m)}
               </button>
             ))}
           </div>
