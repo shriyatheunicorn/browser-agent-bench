@@ -30,6 +30,7 @@ export interface BenchData {
 }
 
 export const MODELS = [
+  "openai/gpt-5.4",
   "openai/gpt-5.4-mini",
   "anthropic/claude-opus-4-6",
   "anthropic/claude-sonnet-4-6",
