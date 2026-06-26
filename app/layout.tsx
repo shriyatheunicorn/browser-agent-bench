@@ -1,11 +1,36 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import localFont from "next/font/local"
 import "./globals.css"
 import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
 
-const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" })
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" })
+// GT Planar — Browserbase display/heading typeface
+const gtPlanar = localFont({
+  src: [{ path: "../public/fonts/GT-Planar-Medium.woff2", weight: "500", style: "normal" }],
+  variable: "--font-planar",
+  display: "swap",
+})
+
+// Plain — Browserbase body/UI typeface
+const plain = localFont({
+  src: [
+    { path: "../public/fonts/Plain-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/Plain-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/Plain-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-plain",
+  display: "swap",
+})
+
+// GT Standard Mono — Browserbase monospace labels
+const gtMono = localFont({
+  src: [
+    { path: "../public/fonts/GT-Standard-Mono-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/GT-Standard-Mono-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-gt-mono",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Browserbase Bench — Agent Performance vs the Field",
@@ -21,7 +46,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="bg-background">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={`${gtPlanar.variable} ${plain.variable} ${gtMono.variable} font-sans antialiased`}>
         <SiteNav />
         {children}
         <SiteFooter />
