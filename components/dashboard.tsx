@@ -344,9 +344,16 @@ function Hero({
         </p>
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <HeroStat icon={Target} label="Suites" value={String(tasks.length)} href="/tasks" sub="suites" />
-        <HeroStat icon={Cpu} label="Models" value={String(models.length)} sub="models" />
-        <HeroStat icon={Activity} label="Agents" value="3" sub="agents" />
+        <HeroStat
+          icon={Target}
+          label="Suites"
+          value={String(tasks.length)}
+          unit="suites"
+          href="/tasks"
+          sub="Try the suites"
+        />
+        <HeroStat icon={Cpu} label="Models" value={String(models.length)} unit="models" sub="evaluated" />
+        <HeroStat icon={Activity} label="Agents" value="3" unit="agents" sub="head-to-head" />
       </div>
     </section>
   )
@@ -356,19 +363,24 @@ function HeroStat({
   icon: Icon,
   label,
   value,
+  unit,
   sub,
   href,
 }: {
   icon: typeof Target
   label: string
   value: string
+  unit?: string
   sub?: string
   href?: string
 }) {
   const inner = (
     <>
       <Icon className="h-4 w-4 text-primary" />
-      <div className="mt-3 font-mono text-2xl font-bold tabular-nums">{value}</div>
+      <div className="mt-3 flex items-baseline gap-1.5 font-mono text-2xl font-bold tabular-nums">
+        {value}
+        {unit && <span className="text-base font-medium text-muted-foreground">{unit}</span>}
+      </div>
       <div className="flex items-center gap-1 text-xs text-muted-foreground">
         {sub ?? label}
         {href && <ArrowUpRight className="h-3 w-3" />}
