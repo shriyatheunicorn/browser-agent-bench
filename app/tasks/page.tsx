@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic"
 
 export const metadata = {
   title: "Try the Tasks — Browserbase Bench",
-  description: "Interact with the live browser-agent benchmark tasks yourself.",
+  description: "Interact with the live browser agent benchmark tasks yourself.",
 }
 
 export default async function TasksPage() {

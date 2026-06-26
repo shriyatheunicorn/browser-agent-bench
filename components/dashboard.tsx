@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, Clock, Target, Zap, Trophy, Activity } from "lucide-react"
+import { ArrowUpRight, Clock, Target, Cpu, Trophy, Activity } from "lucide-react"
 import {
   PROVIDERS,
   GROUPS,
@@ -63,7 +63,13 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-      <Hero tasks={tasks} primaryModel={defaultModel} generatedLabel={generatedLabel} sourceLabel={sourceLabel} />
+        <Hero
+          tasks={tasks}
+          models={models}
+          primaryModel={defaultModel}
+          generatedLabel={generatedLabel}
+          sourceLabel={sourceLabel}
+        />
 
       {/* Controls */}
       <section className="mt-4 flex flex-col gap-4 rounded-xl border border-border bg-card/50 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -306,11 +312,13 @@ function ModelLeaderboard({
 
 function Hero({
   tasks,
+  models,
   primaryModel,
   generatedLabel,
   sourceLabel,
 }: {
   tasks: BenchTask[]
+  models: string[]
   primaryModel: ModelLabel
   generatedLabel: string | null
   sourceLabel: string
@@ -319,7 +327,7 @@ function Hero({
     <section className="border-b border-border py-14 sm:py-20">
       <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
         <Activity className="h-3.5 w-3.5 text-primary" />
-        Verifiable browser-agent benchmark
+        Verifiable browser agent benchmark
       </div>
       <h1 className="mt-6 max-w-4xl text-balance text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
         How <span className="bb-mark">Browserbase</span> agents perform under real pressure.
@@ -336,9 +344,16 @@ function Hero({
         </p>
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} href="/tasks" sub="Try the tasks" />
-        <HeroStat icon={Zap} label="Task families" value="3" sub="arcade · custom · human" />
-        <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
+        <HeroStat
+          icon={Target}
+          label="Suites"
+          value={String(tasks.length)}
+          unit="suites"
+          href="/tasks"
+          sub="Try the suites"
+        />
+        <HeroStat icon={Cpu} label="Models" value={String(models.length)} unit="models" sub="evaluated" />
+        <HeroStat icon={Activity} label="Agents" value="3" unit="agents" sub="head-to-head" />
       </div>
     </section>
   )
@@ -348,19 +363,24 @@ function HeroStat({
   icon: Icon,
   label,
   value,
+  unit,
   sub,
   href,
 }: {
   icon: typeof Target
   label: string
   value: string
+  unit?: string
   sub?: string
   href?: string
 }) {
   const inner = (
     <>
       <Icon className="h-4 w-4 text-primary" />
-      <div className="mt-3 font-mono text-2xl font-bold tabular-nums">{value}</div>
+      <div className="mt-3 flex items-baseline gap-1.5 font-mono text-2xl font-bold tabular-nums">
+        {value}
+        {unit && <span className="text-base font-medium text-muted-foreground">{unit}</span>}
+      </div>
       <div className="flex items-center gap-1 text-xs text-muted-foreground">
         {sub ?? label}
         {href && <ArrowUpRight className="h-3 w-3" />}

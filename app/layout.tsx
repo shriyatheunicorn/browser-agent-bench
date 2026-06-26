@@ -35,7 +35,7 @@ const gtMono = localFont({
 export const metadata: Metadata = {
   title: "Browserbase Bench — Agent Performance vs the Field",
   description:
-    "A deterministic browser-agent benchmark highlighting Browserbase performance across tasks and models, head-to-head against Browser Use and Browserless.",
+    "A deterministic browser agent benchmark highlighting Browserbase performance across tasks and models, head-to-head against Browser Use and Browserless.",
   generator: "v0.app",
 }
 

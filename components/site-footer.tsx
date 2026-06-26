@@ -34,7 +34,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <p className="max-w-xs text-pretty text-sm leading-relaxed text-primary-foreground/90">
-              An open browser-agent benchmark. Spin up a browser, connect your model, and measure real task completion.
+              An open browser agent benchmark. Spin up a browser, connect your model, and measure real task completion.
             </p>
             <a
               href="https://browserbase.com"
