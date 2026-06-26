@@ -315,9 +315,6 @@ function Hero({
   generatedLabel: string | null
   sourceLabel: string
 }) {
-  const arcade = groupStatsFor(tasks, "browserbase", primaryModel).find((g) => g.group === "neuron-arcade")
-  const arcadeRate = arcade ? pct(arcade.rate) : "—"
-
   return (
     <section className="border-b border-border py-14 sm:py-20">
       <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -337,9 +334,8 @@ function Hero({
           <span className="text-foreground">{sourceLabel}</span> · {generatedLabel}
         </p>
       )}
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} />
-        <HeroStat icon={Trophy} label="Neuron Arcade" value={arcadeRate} sub="Browserbase · Neuron Arcade" />
         <HeroStat icon={Zap} label="Task families" value="3" sub="arcade · custom · human" />
         <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
       </div>
