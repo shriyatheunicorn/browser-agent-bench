@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, Clock, Target, Zap, Trophy, Activity } from "lucide-react"
+import { ArrowUpRight, Clock, Target, Cpu, Trophy, Activity } from "lucide-react"
 import {
   PROVIDERS,
   GROUPS,
@@ -63,7 +63,13 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-      <Hero tasks={tasks} primaryModel={defaultModel} generatedLabel={generatedLabel} sourceLabel={sourceLabel} />
+        <Hero
+          tasks={tasks}
+          models={models}
+          primaryModel={defaultModel}
+          generatedLabel={generatedLabel}
+          sourceLabel={sourceLabel}
+        />
 
       {/* Controls */}
       <section className="mt-4 flex flex-col gap-4 rounded-xl border border-border bg-card/50 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -306,11 +312,13 @@ function ModelLeaderboard({
 
 function Hero({
   tasks,
+  models,
   primaryModel,
   generatedLabel,
   sourceLabel,
 }: {
   tasks: BenchTask[]
+  models: string[]
   primaryModel: ModelLabel
   generatedLabel: string | null
   sourceLabel: string
@@ -337,7 +345,7 @@ function Hero({
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} href="/tasks" sub="Try the tasks" />
-        <HeroStat icon={Zap} label="Task families" value="3" sub="arcade · custom · human" />
+        <HeroStat icon={Cpu} label="Models" value={String(models.length)} sub="evaluated" />
         <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
       </div>
     </section>
