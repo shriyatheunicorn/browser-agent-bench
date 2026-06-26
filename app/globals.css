@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-bb: var(--bb);
+  --color-bu: var(--bu);
+  --color-bl: var(--bl);
+  --color-pass: var(--pass);
+  --color-fail: var(--fail);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius: 0.625rem;
+}
+
+:root {
+  --background: oklch(0.16 0.006 50);
+  --foreground: oklch(0.97 0.005 80);
+  --card: oklch(0.2 0.007 55);
+  --card-foreground: oklch(0.97 0.005 80);
+  --muted: oklch(0.27 0.008 55);
+  --muted-foreground: oklch(0.68 0.01 60);
+  --border: oklch(0.3 0.008 55);
+
+  /* Browserbase orange */
+  --primary: oklch(0.66 0.21 38);
+  --primary-foreground: oklch(0.99 0.005 80);
+  --accent: oklch(0.27 0.008 55);
+  --accent-foreground: oklch(0.97 0.005 80);
+
+  /* provider colors */
+  --bb: oklch(0.66 0.21 38);
+  --bu: oklch(0.72 0.13 215);
+  --bl: oklch(0.78 0.15 145);
+
+  --pass: oklch(0.72 0.16 150);
+  --fail: oklch(0.6 0.19 25);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes growBar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-grow {
+  transform-origin: left;
+  animation: growBar 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
