@@ -84,7 +84,7 @@ export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardP
           </div>
         </div>
         <p className="font-mono text-xs text-muted-foreground">
-          {tasks.length} tasks · 3 task families · deterministic graders · no LLM judge
+          {tasks.length} tasks · 3 task families · deterministic grading
         </p>
       </section>
 
