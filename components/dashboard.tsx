@@ -339,7 +339,7 @@ function Hero({
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} />
-        <HeroStat icon={Trophy} label="Neuron Arcade" value={arcadeRate} sub="Browserbase pass rate" />
+        <HeroStat icon={Trophy} label="Neuron Arcade" value={arcadeRate} sub="Browserbase · Neuron Arcade" />
         <HeroStat icon={Zap} label="Task families" value="3" sub="arcade · custom · human" />
         <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
       </div>
