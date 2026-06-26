@@ -1,5 +1,10 @@
 import { Dashboard } from "@/components/dashboard"
+import { loadBenchData } from "@/lib/report-loader"
 
-export default function Page() {
-  return <Dashboard />
+// Re-read the reports on every request so committing fresh runs updates the UI.
+export const dynamic = "force-dynamic"
+
+export default async function Page() {
+  const { tasks, models, generatedAt } = await loadBenchData()
+  return <Dashboard tasks={tasks} models={models} generatedAt={generatedAt} />
 }

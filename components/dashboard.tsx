@@ -4,16 +4,15 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight, Clock, Target, Zap, Trophy, Activity } from "lucide-react"
 import {
-  TASKS,
-  MODELS,
   PROVIDERS,
   GROUPS,
+  type BenchTask,
   type ModelLabel,
   type ProviderId,
   statsFor,
   groupStatsFor,
   providerHasModel,
-} from "@/lib/data"
+} from "@/lib/types"
 
 const PROVIDER_META: Record<ProviderId, { name: string; varColor: string }> = {
   browserbase: { name: "Browserbase", varColor: "var(--bb)" },
@@ -25,24 +24,47 @@ function pct(n: number) {
   return `${Math.round(n * 100)}%`
 }
 
-export function Dashboard() {
-  const [model, setModel] = useState<ModelLabel>("openai/gpt-5.4-mini")
+function formatGenerated(iso: string | null): string | null {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  return d.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  })
+}
+
+export interface DashboardProps {
+  tasks: BenchTask[]
+  models: string[]
+  generatedAt: string | null
+}
+
+export function Dashboard({ tasks, models, generatedAt }: DashboardProps) {
+  const defaultModel = models.includes("openai/gpt-5.4-mini") ? "openai/gpt-5.4-mini" : models[0]
+  const [model, setModel] = useState<ModelLabel>(defaultModel)
   const [opponent, setOpponent] = useState<ProviderId>("browser-use")
 
-  const bbStats = useMemo(() => statsFor("browserbase", model), [model])
-  const oppHasModel = providerHasModel(opponent, model)
-  const bbGroups = useMemo(() => groupStatsFor("browserbase", model), [model])
+  const bbStats = useMemo(() => statsFor(tasks, "browserbase", model), [tasks, model])
+  const oppHasModel = providerHasModel(tasks, opponent, model)
+  const bbGroups = useMemo(() => groupStatsFor(tasks, "browserbase", model), [tasks, model])
+
+  const generatedLabel = formatGenerated(generatedAt)
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-      <Hero />
+      <Hero tasks={tasks} primaryModel={defaultModel} generatedLabel={generatedLabel} />
 
       {/* Controls */}
       <section className="mt-4 flex flex-col gap-4 rounded-xl border border-border bg-card/50 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-muted-foreground">Model</span>
-          <div className="flex rounded-lg border border-border bg-background p-1">
-            {MODELS.map((m) => (
+          <div className="flex flex-wrap rounded-lg border border-border bg-background p-1">
+            {models.map((m) => (
               <button
                 key={m}
                 onClick={() => setModel(m)}
@@ -56,15 +78,15 @@ export function Dashboard() {
           </div>
         </div>
         <p className="font-mono text-xs text-muted-foreground">
-          21 tasks · 3 task families · deterministic graders · no LLM judge
+          {tasks.length} tasks · 3 task families · deterministic graders · no LLM judge
         </p>
       </section>
 
       {/* Provider summary cards */}
       <section className="mt-6 grid gap-4 md:grid-cols-3">
         {PROVIDERS.map((p) => {
-          const s = statsFor(p.id, model)
-          const has = providerHasModel(p.id, model)
+          const s = statsFor(tasks, p.id, model)
+          const has = providerHasModel(tasks, p.id, model)
           const isBB = p.id === "browserbase"
           return (
             <div
@@ -106,7 +128,8 @@ export function Dashboard() {
                 </>
               ) : (
                 <div className="mt-6 rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-                  Not run for this model. Browserless requires an OpenAI model string.
+                  No results for this model yet. Commit a report that includes {p.name} on{" "}
+                  <span className="font-mono">{model}</span>.
                 </div>
               )}
             </div>
@@ -142,32 +165,36 @@ export function Dashboard() {
         </div>
 
         {oppHasModel ? (
-          <HeadToHead model={model} opponent={opponent} />
+          <HeadToHead tasks={tasks} model={model} opponent={opponent} />
         ) : (
           <div className="mt-5 rounded-xl border border-dashed border-border bg-card/40 p-8 text-center">
             <p className="text-sm text-muted-foreground">
-              {PROVIDER_META[opponent].name} was not run on the{" "}
-              <span className="font-mono text-foreground">{model}</span> model. Switch the model to{" "}
-              <button
-                onClick={() => setModel("openai/gpt-5.4-mini")}
-                className="font-mono text-primary underline underline-offset-2"
-              >
-                openai/gpt-5.4-mini
-              </button>{" "}
-              to see this comparison.
+              No {PROVIDER_META[opponent].name} results found for the{" "}
+              <span className="font-mono text-foreground">{model}</span> model. Add a comparison report that includes{" "}
+              {PROVIDER_META[opponent].name}, or switch models above.
             </p>
           </div>
         )}
       </section>
 
       {/* Full matrix */}
-      <TaskMatrix model={model} />
+      <TaskMatrix tasks={tasks} model={model} />
     </main>
   )
 }
 
-function Hero() {
-  const miniBB = statsFor("browserbase", "openai/gpt-5.4-mini")
+function Hero({
+  tasks,
+  primaryModel,
+  generatedLabel,
+}: {
+  tasks: BenchTask[]
+  primaryModel: ModelLabel
+  generatedLabel: string | null
+}) {
+  const arcade = groupStatsFor(tasks, "browserbase", primaryModel).find((g) => g.group === "neuron-arcade")
+  const arcadeRate = arcade ? pct(arcade.rate) : "—"
+
   return (
     <section className="border-b border-border py-14 sm:py-20">
       <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -178,13 +205,19 @@ function Hero() {
         How <span className="bb-mark">Browserbase</span> agents perform under real pressure.
       </h1>
       <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-        A code-graded suite of 21 browser tasks run across providers and models. No self-reported success, no LLM
-        judge — every pass is verified by a deterministic grader.
+        A code-graded suite of {tasks.length} browser tasks run across providers and models. No self-reported success,
+        no LLM judge — every pass is verified by a deterministic grader.
       </p>
+      {generatedLabel && (
+        <p className="mt-3 font-mono text-xs text-muted-foreground">
+          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-pass" /> Latest run parsed from{" "}
+          <span className="text-foreground">/reports</span> · {generatedLabel}
+        </p>
+      )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <HeroStat icon={Target} label="Tasks graded" value="21" />
-        <HeroStat icon={Trophy} label="Neuron Arcade" value="100%" sub="Browserbase pass rate" />
-        <HeroStat icon={Zap} label="Fastest family" value="56s" sub="avg arcade solve" />
+        <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} />
+        <HeroStat icon={Trophy} label="Neuron Arcade" value={arcadeRate} sub="Browserbase pass rate" />
+        <HeroStat icon={Zap} label="Task families" value="3" sub="arcade · custom · human" />
         <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
       </div>
     </section>
@@ -227,8 +260,11 @@ function BrowserbaseStrengths({
         <h2 className="text-2xl font-semibold tracking-tight">Where Browserbase shines</h2>
       </div>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        On precision-grounding and DOM-traversal cabinets, Browserbase completes cleanly and fast — pass rate by task
-        family for <span className="font-mono text-foreground">{model}</span>.
+        Pass rate by task family for <span className="font-mono text-foreground">{model}</span> — overall{" "}
+        <span className="font-mono text-foreground">
+          {stats.passed}/{stats.total}
+        </span>{" "}
+        graded passes.
       </p>
       <div className="mt-6 space-y-4">
         {groups.map((g) => (
@@ -240,29 +276,31 @@ function BrowserbaseStrengths({
               </span>
             </div>
             <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full animate-grow rounded-full bg-primary"
-                style={{ width: pct(g.rate) }}
-              />
+              <div className="h-full animate-grow rounded-full bg-primary" style={{ width: pct(g.rate) }} />
             </div>
             <p className="mt-1 text-xs text-muted-foreground">{GROUPS[g.group].description}</p>
           </div>
         ))}
+        {groups.length === 0 && (
+          <p className="text-sm text-muted-foreground">No Browserbase results for this model yet.</p>
+        )}
       </div>
     </section>
   )
 }
 
-function HeadToHead({ model, opponent }: { model: ModelLabel; opponent: ProviderId }) {
-  const bb = statsFor("browserbase", model)
-  const opp = statsFor(opponent, model)
+function HeadToHead({ tasks, model, opponent }: { tasks: BenchTask[]; model: ModelLabel; opponent: ProviderId }) {
+  const bb = statsFor(tasks, "browserbase", model)
+  const opp = statsFor(tasks, opponent, model)
   const oppMeta = PROVIDER_META[opponent]
 
-  const rows = TASKS.map((t) => {
-    const a = t.results[model]?.browserbase
-    const b = t.results[model]?.[opponent]
-    return { task: t, a, b }
-  }).filter((row) => row.a && row.b && row.a.status !== "na" && row.b.status !== "na")
+  const rows = tasks
+    .map((t) => {
+      const a = t.results[model]?.browserbase
+      const b = t.results[model]?.[opponent]
+      return { task: t, a, b }
+    })
+    .filter((row) => row.a && row.b && row.a.status !== "na" && row.b.status !== "na")
 
   let bbWins = 0
   let oppWins = 0
@@ -379,7 +417,7 @@ function ResultChip({ status, time }: { status: string; time: number | null }) {
   )
 }
 
-function TaskMatrix({ model }: { model: ModelLabel }) {
+function TaskMatrix({ tasks, model }: { tasks: BenchTask[]; model: ModelLabel }) {
   const order: ProviderId[] = ["browserbase", "browser-use", "browserless"]
   return (
     <section className="mt-12">
@@ -412,10 +450,10 @@ function TaskMatrix({ model }: { model: ModelLabel }) {
             </tr>
           </thead>
           <tbody>
-            {TASKS.map((t) => (
+            {tasks.map((t) => (
               <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted/20">
                 <td className="px-4 py-3 font-medium">{t.name}</td>
-                <td className="px-4 py-3 text-xs text-muted-foreground">{GROUPS[t.group].label}</td>
+                <td className="px-4 py-3 text-xs text-muted-foreground">{GROUPS[t.group]?.label ?? t.group}</td>
                 {order.map((p) => {
                   const res = t.results[model]?.[p]
                   return (
@@ -434,8 +472,9 @@ function TaskMatrix({ model }: { model: ModelLabel }) {
         </table>
       </div>
       <p className="mt-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
-        Methodology: Browserbase and Browser Use rows reflect the latest deterministic comparison reports. Browserless
-        rows cover the OpenAI overlap models; combinations not run are shown as n/a. Pass = grader-verified success.
+        Methodology: rows are parsed directly from the latest comparison reports in <span>/reports</span>. The newest
+        run wins per task/model/provider. Combinations with no report row are shown as n/a. Pass = grader-verified
+        success.
       </p>
     </section>
   )

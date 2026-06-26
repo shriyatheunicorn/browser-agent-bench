@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { ArrowUpRight, Copy, Check, Search, ExternalLink, Play } from "lucide-react"
-import { TASKS, GROUPS, MODELS, PROVIDERS, type BenchTask, type ProviderId } from "@/lib/data"
+import { GROUPS, PROVIDERS, type BenchTask, type ProviderId } from "@/lib/types"
 
 const PROVIDER_COLOR: Record<ProviderId, string> = {
   browserbase: "var(--bb)",
@@ -10,18 +10,23 @@ const PROVIDER_COLOR: Record<ProviderId, string> = {
   browserless: "var(--bl)",
 }
 
-export function TaskExplorer() {
+export interface TaskExplorerProps {
+  tasks: BenchTask[]
+  models: string[]
+}
+
+export function TaskExplorer({ tasks, models }: TaskExplorerProps) {
   const [query, setQuery] = useState("")
-  const [selectedId, setSelectedId] = useState(TASKS[0].id)
+  const [selectedId, setSelectedId] = useState(tasks[0]?.id ?? "")
   const [showFrame, setShowFrame] = useState(false)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return TASKS
-    return TASKS.filter(
-      (t) => t.name.toLowerCase().includes(q) || GROUPS[t.group].label.toLowerCase().includes(q),
+    if (!q) return tasks
+    return tasks.filter(
+      (t) => t.name.toLowerCase().includes(q) || (GROUPS[t.group]?.label ?? t.group).toLowerCase().includes(q),
     )
-  }, [query])
+  }, [query, tasks])
 
   const grouped = useMemo(() => {
     const map = new Map<string, BenchTask[]>()
@@ -33,7 +38,7 @@ export function TaskExplorer() {
     return map
   }, [filtered])
 
-  const selected = TASKS.find((t) => t.id === selectedId)!
+  const selected = tasks.find((t) => t.id === selectedId) ?? tasks[0]
 
   function handleSelect(id: string) {
     setSelectedId(id)
@@ -69,7 +74,7 @@ export function TaskExplorer() {
             {Array.from(grouped.entries()).map(([group, tasks]) => (
               <div key={group}>
                 <h3 className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {GROUPS[group].label}
+                  {GROUPS[group]?.label ?? group}
                 </h3>
                 <div className="mt-2 space-y-1">
                   {tasks.map((t) => (
@@ -96,14 +101,28 @@ export function TaskExplorer() {
 
         {/* Detail */}
         <section className="min-w-0">
-          <TaskDetail task={selected} showFrame={showFrame} onRun={() => setShowFrame(true)} />
+          {selected ? (
+            <TaskDetail task={selected} models={models} showFrame={showFrame} onRun={() => setShowFrame(true)} />
+          ) : (
+            <p className="text-sm text-muted-foreground">No tasks available.</p>
+          )}
         </section>
       </div>
     </main>
   )
 }
 
-function TaskDetail({ task, showFrame, onRun }: { task: BenchTask; showFrame: boolean; onRun: () => void }) {
+function TaskDetail({
+  task,
+  models,
+  showFrame,
+  onRun,
+}: {
+  task: BenchTask
+  models: string[]
+  showFrame: boolean
+  onRun: () => void
+}) {
   const [copied, setCopied] = useState(false)
 
   function copyPrompt() {
@@ -117,7 +136,7 @@ function TaskDetail({ task, showFrame, onRun }: { task: BenchTask; showFrame: bo
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {GROUPS[task.group].label}
+            {GROUPS[task.group]?.label ?? task.group}
           </span>
           <span className="font-mono text-xs text-muted-foreground">{task.id}</span>
         </div>
@@ -210,7 +229,7 @@ function TaskDetail({ task, showFrame, onRun }: { task: BenchTask; showFrame: bo
             <thead>
               <tr className="border-b border-border text-left text-xs text-muted-foreground">
                 <th className="py-2 pr-4 font-medium">Provider</th>
-                {MODELS.map((m) => (
+                {models.map((m) => (
                   <th key={m} className="py-2 pr-4 font-mono font-medium">
                     {m}
                   </th>
@@ -226,7 +245,7 @@ function TaskDetail({ task, showFrame, onRun }: { task: BenchTask; showFrame: bo
                       {p.name}
                     </span>
                   </td>
-                  {MODELS.map((m) => {
+                  {models.map((m) => {
                     const res = task.results[m]?.[p.id]
                     return (
                       <td key={m} className="py-2.5 pr-4">
