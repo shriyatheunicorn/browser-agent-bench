@@ -1,0 +1,16 @@
+[
+  {
+    "label": "openai/gpt-5.4",
+    "browserbaseModel": "openai/gpt-5.4",
+    "browserUseModel": null,
+    "browserlessModel": "gpt-5.4",
+    "notes": "Browserbase and Browserless overlap. Browser Use is intentionally N/A."
+  },
+  {
+    "label": "openai/gpt-5.4-mini",
+    "browserbaseModel": "openai/gpt-5.4-mini",
+    "browserUseModel": null,
+    "browserlessModel": "gpt-5.4-mini",
+    "notes": "Browserbase and Browserless overlap. Browser Use is intentionally N/A."
+  }
+]

@@ -124,6 +124,17 @@ npm run eval
 
 `models.comparable.json` includes `browserlessModel` only for OpenAI labels that can run through the default Browserless MCP + OpenAI Responses path. Unsupported Browserless/model combinations are written as `skipped` rows instead of being run under the wrong model.
 
+For the Browserbase + Browserless overlap where Browser Use should be N/A:
+
+```bash
+MODELS_FILE=./models.browserbase-browserless.json \
+PROVIDERS=browserbase,browser-use,browserless \
+SEND_MODEL_PARAM=true \
+npm run eval
+```
+
+That overlap currently includes `openai/gpt-5.4` and `openai/gpt-5.4-mini`. The `browserUseModel` values are explicitly `null`, so Browser Use rows are recorded as skipped and rendered as `n/a` in comparison reports.
+
 The current Browserbase demo endpoint used by this suite exposes `agentMode`, but not the underlying LLM model in its start response. This suite always records `modelLabel` for comparison. If your Browserbase endpoint accepts a model field in the request body, set:
 
 ```bash

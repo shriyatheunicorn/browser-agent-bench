@@ -157,6 +157,7 @@ function aggregateRows(resultRows) {
         total: 0,
         passed: 0,
         failed: 0,
+        skipped: 0,
         msTotal: 0,
         msCount: 0,
         costTotal: 0,
@@ -167,7 +168,8 @@ function aggregateRows(resultRows) {
       };
 
     current.total += 1;
-    if (row.successCriteriaMet) current.passed += 1;
+    if (isSkipped(row)) current.skipped += 1;
+    else if (row.successCriteriaMet) current.passed += 1;
     else current.failed += 1;
 
     if (typeof row.ms === "number" && Number.isFinite(row.ms)) {
@@ -283,7 +285,7 @@ function renderModelSummaryRow(model, aggregate, providers) {
   const browserbase = aggregate.get(["browserbase", model].join("\0"));
   const browserUse = aggregate.get(["browser-use", model].join("\0"));
   const delta =
-    browserbase && browserUse
+    hasGradedRows(browserbase) && hasGradedRows(browserUse)
       ? `${formatSignedPct(passRate(browserbase) - passRate(browserUse))} pp`
       : "n/a";
 
@@ -298,8 +300,10 @@ function renderModelSummaryRow(model, aggregate, providers) {
 
 function renderAggregate(summary) {
   if (!summary) return "n/a";
+  if (summary.skipped === summary.total) return "n/a";
 
-  const passText = `${summary.passed}/${summary.total} (${formatPct(passRate(summary))})`;
+  const gradedTotal = summary.total - summary.skipped;
+  const passText = `${summary.passed}/${gradedTotal} (${formatPct(passRate(summary))})`;
   const durationText = summary.msCount ? `avg ${formatSeconds(summary.msTotal / summary.msCount)}` : "avg n/a";
   const costText = summary.costCount ? `cost $${summary.costTotal.toFixed(3)}` : null;
   return [passText, durationText, costText].filter(Boolean).join(", ");
@@ -307,6 +311,7 @@ function renderAggregate(summary) {
 
 function renderAggregateSource(summary) {
   if (!summary) return "n/a";
+  if (summary.skipped === summary.total) return `${summary.total} N/A row(s)`;
 
   const statuses = [...summary.statusCounts.entries()]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
@@ -347,18 +352,25 @@ function renderTaskRow(model, taskId, latestRows, providers) {
 
 function renderTaskOutcome(row) {
   if (!row) return "n/a";
+  if (isSkipped(row)) return "n/a";
   const grade = row.successCriteriaMet ? "pass" : "fail";
   return `${grade}, ${normalizeStatus(row.status)}, ${formatSeconds(row.ms)}`;
 }
 
 function renderTaskResult(row) {
   if (!row) return "n/a";
+  if (isSkipped(row)) return "n/a";
   const value = row.resultText ?? row.output?.result ?? row.rawOutput ?? row.error ?? "";
   return clip(String(value).replace(/\s+/g, " "), 96);
 }
 
 function passRate(summary) {
-  return summary.total ? (summary.passed / summary.total) * 100 : 0;
+  const gradedTotal = summary.total - summary.skipped;
+  return gradedTotal ? (summary.passed / gradedTotal) * 100 : 0;
+}
+
+function hasGradedRows(summary) {
+  return Boolean(summary && summary.total > summary.skipped);
 }
 
 function formatPct(value) {
@@ -376,6 +388,10 @@ function formatSeconds(value) {
 
 function normalizeStatus(status) {
   return String(status ?? "unknown").toLowerCase();
+}
+
+function isSkipped(row) {
+  return normalizeStatus(row?.status) === "skipped";
 }
 
 function unique(values) {

@@ -56,6 +56,7 @@ const BROWSERLESS_AGENT_API_KEY =
   process.env.BROWSERLESS_AGENT_API_KEY ?? process.env.BROWSERLESS_API_KEY ?? process.env.BROWSERLESS_TOKEN ?? "";
 const DRY_RUN = boolEnv("DRY_RUN", false);
 const SELF_TEST = boolEnv("SELF_TEST", false);
+const RESUME = boolEnv("RESUME", false);
 const MODEL_PARAM_NAME = process.env.MODEL_PARAM_NAME ?? "model";
 const BROWSERBASE_MODEL_PARAM_NAME = process.env.BROWSERBASE_MODEL_PARAM_NAME ?? MODEL_PARAM_NAME;
 const BROWSER_USE_MODEL_PARAM_NAME = process.env.BROWSER_USE_MODEL_PARAM_NAME ?? MODEL_PARAM_NAME;
@@ -76,6 +77,11 @@ const rows = [];
 validateTasks(selectedTasks);
 validateProviders(PROVIDERS);
 mkdirSync(runRoot, { recursive: true });
+if (RESUME && existsSync(jsonlPath)) {
+  const existingRows = readJsonl(jsonlPath);
+  rows.push(...existingRows);
+}
+const completedTrialKeys = new Set(rows.map((row) => trialKey(row)));
 
 console.log(`Suite: ${SUITE_NAME}`);
 console.log(`Run folder: ${runRoot}`);
@@ -84,6 +90,7 @@ console.log(`Tasks: ${selectedTasks.length}`);
 console.log(`Models: ${models.map((model) => model.label).join(", ")}`);
 console.log(`Trials per task/model: ${TRIALS}`);
 console.log(`Concurrency: ${CONCURRENCY}`);
+if (RESUME) console.log(`Resume: loaded ${rows.length} existing row(s)`);
 
 if (SELF_TEST) {
   const selfTest = runSelfTest();
@@ -141,7 +148,9 @@ function buildTrialEntries() {
             url: task.url,
             trial,
           };
-          entries.push({ provider, task, model, trial, rowBase });
+          if (!completedTrialKeys.has(trialKey(rowBase))) {
+            entries.push({ provider, task, model, trial, rowBase });
+          }
         }
       }
     }
@@ -168,6 +177,7 @@ async function runTrialEntry({ provider, task, model, trial, rowBase }) {
       ? await runProviderTrial(provider, task, model, trial, rowBase)
       : await runSkippedTrial(task, model, trial, rowBase);
     rows.push(row);
+    completedTrialKeys.add(trialKey(row));
     writeFileSync(jsonlPath, `${JSON.stringify(row)}\n`, { flag: "a" });
     console.log(
       `${provider} ${model.label} ${task.id} trial ${trial}: ${row.status} success=${row.successCriteriaMet} ${
@@ -183,6 +193,7 @@ async function runTrialEntry({ provider, task, model, trial, rowBase }) {
       error: error instanceof Error ? error.message : String(error),
     };
     rows.push(row);
+    completedTrialKeys.add(trialKey(row));
     writeFileSync(jsonlPath, `${JSON.stringify(row)}\n`, { flag: "a" });
     console.log(`${provider} ${model.label} ${task.id} trial ${trial}: ERROR ${row.error}`);
   }
@@ -1381,6 +1392,17 @@ function vercelCurl(url, args = []) {
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function readJsonl(path) {
+  return readFileSync(path, "utf8")
+    .split(/\n/)
+    .filter((line) => line.trim())
+    .map((line) => JSON.parse(line));
+}
+
+function trialKey(row) {
+  return [row.provider, row.modelLabel, row.taskId, row.trial].join("\t");
 }
 
 function safeJsonParse(text) {
