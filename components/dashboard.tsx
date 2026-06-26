@@ -46,9 +46,11 @@ export interface DashboardProps {
   tasks: BenchTask[]
   models: string[]
   generatedAt: string | null
+  sourceFile?: string | null
 }
 
-export function Dashboard({ tasks, models, generatedAt }: DashboardProps) {
+export function Dashboard({ tasks, models, generatedAt, sourceFile }: DashboardProps) {
+  const sourceLabel = sourceFile?.includes("results") ? "/results" : "/reports"
   const defaultModel = models.includes("openai/gpt-5.4-mini") ? "openai/gpt-5.4-mini" : models[0]
   const [model, setModel] = useState<ModelLabel>(defaultModel)
   const [opponent, setOpponent] = useState<ProviderId>("browser-use")
@@ -61,7 +63,7 @@ export function Dashboard({ tasks, models, generatedAt }: DashboardProps) {
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-      <Hero tasks={tasks} primaryModel={defaultModel} generatedLabel={generatedLabel} />
+      <Hero tasks={tasks} primaryModel={defaultModel} generatedLabel={generatedLabel} sourceLabel={sourceLabel} />
 
       {/* Controls */}
       <section className="mt-4 flex flex-col gap-4 rounded-xl border border-border bg-card/50 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -191,10 +193,12 @@ function Hero({
   tasks,
   primaryModel,
   generatedLabel,
+  sourceLabel,
 }: {
   tasks: BenchTask[]
   primaryModel: ModelLabel
   generatedLabel: string | null
+  sourceLabel: string
 }) {
   const arcade = groupStatsFor(tasks, "browserbase", primaryModel).find((g) => g.group === "neuron-arcade")
   const arcadeRate = arcade ? pct(arcade.rate) : "—"
@@ -215,7 +219,7 @@ function Hero({
       {generatedLabel && (
         <p className="mt-3 font-mono text-xs text-muted-foreground">
           <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-pass" /> Latest run parsed from{" "}
-          <span className="text-foreground">/reports</span> · {generatedLabel}
+          <span className="text-foreground">{sourceLabel}</span> · {generatedLabel}
         </p>
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -476,9 +480,9 @@ function TaskMatrix({ tasks, model }: { tasks: BenchTask[]; model: ModelLabel })
         </table>
       </div>
       <p className="mt-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
-        Methodology: rows are parsed directly from the latest comparison reports in <span>/reports</span>. The newest
-        run wins per task/model/provider. Combinations with no report row are shown as n/a. Pass = grader-verified
-        success.
+        Methodology: rows are parsed directly from committed run artifacts (<span>results/*/results.jsonl</span>, with{" "}
+        <span>/reports</span> as fallback). The newest run wins per task/model/provider. Combinations with no row are
+        shown as n/a. Pass = grader-verified success.
       </p>
     </section>
   )

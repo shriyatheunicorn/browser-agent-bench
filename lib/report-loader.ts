@@ -5,18 +5,9 @@
 
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
-import {
-  type BenchData,
-  type BenchTask,
-  type ProviderId,
-  type ProviderResults,
-  type Result,
-  type Status,
-  MODELS,
-  PROVIDERS,
-  NA,
-} from "./types"
-import { TASK_META, TASK_META_BY_ID } from "./task-meta"
+import { type BenchData, type ProviderId, type Result, type Status } from "./types"
+import { assembleBenchData, type BestRow } from "./assemble"
+import { loadResultsData } from "./results-loader"
 
 const REPORTS_DIR = path.join(process.cwd(), "reports")
 
@@ -121,15 +112,8 @@ function parseReport(content: string): { rows: ParsedRow[]; generatedAt: string 
   return { rows, generatedAt: generatedAtIso }
 }
 
-function emptyProviderResults(): ProviderResults {
-  return {
-    browserbase: { ...NA },
-    "browser-use": { ...NA },
-    browserless: { ...NA },
-  }
-}
-
-export async function loadBenchData(): Promise<BenchData> {
+// Reads /reports/*.md, merges newest rows, and returns the BenchData shape.
+async function loadReportData(): Promise<BenchData> {
   let files: string[] = []
   try {
     files = (await readdir(REPORTS_DIR)).filter((f) => f.endsWith(".md"))
@@ -138,10 +122,11 @@ export async function loadBenchData(): Promise<BenchData> {
   }
 
   // Merge rows across all reports, keeping the newest row per model/task/provider.
-  const best = new Map<string, ParsedRow>()
+  const best = new Map<string, BestRow>()
   let newestGenerated: string | null = null
   let newestGeneratedMs = -1
   let sourceFile: string | null = null
+  const rowGeneratedMs = new Map<string, number>()
 
   for (const file of files) {
     let content = ""
@@ -159,61 +144,20 @@ export async function loadBenchData(): Promise<BenchData> {
     }
     for (const row of rows) {
       const key = `${row.model}|||${row.taskId}|||${row.provider}`
-      const existing = best.get(key)
-      if (!existing || row.generatedAt >= existing.generatedAt) {
-        best.set(key, row)
+      const prevMs = rowGeneratedMs.get(key)
+      if (prevMs == null || row.generatedAt >= prevMs) {
+        rowGeneratedMs.set(key, row.generatedAt)
+        best.set(key, { model: row.model, taskId: row.taskId, provider: row.provider, result: row.result })
       }
     }
   }
 
-  // Discover models present in the data, ordered with the known MODELS first.
-  const modelSet = new Set<string>()
-  for (const row of best.values()) modelSet.add(row.model)
-  const known = (MODELS as readonly string[]).filter((m) => modelSet.has(m))
-  const extras = [...modelSet].filter((m) => !known.includes(m)).sort()
-  const models = [...known, ...extras]
-  if (models.length === 0) models.push(...MODELS)
+  return assembleBenchData(best, newestGenerated, sourceFile)
+}
 
-  // Build the task list from curated metadata order; attach parsed results.
-  const buildResultsForTask = (taskId: string): Record<string, ProviderResults> => {
-    const byModel: Record<string, ProviderResults> = {}
-    for (const model of models) {
-      const pr = emptyProviderResults()
-      for (const p of PROVIDERS) {
-        const row = best.get(`${model}|||${taskId}|||${p.id}`)
-        if (row) pr[p.id] = row.result
-      }
-      byModel[model] = pr
-    }
-    return byModel
-  }
-
-  const tasks: BenchTask[] = TASK_META.map((meta) => ({
-    id: meta.id,
-    name: meta.name,
-    group: meta.group,
-    url: meta.url,
-    prompt: meta.prompt,
-    successCriteria: meta.successCriteria,
-    results: buildResultsForTask(meta.id),
-  }))
-
-  // Include any tasks that appear in reports but are missing from metadata.
-  const knownIds = new Set(TASK_META.map((t) => t.id))
-  const reportTaskIds = new Set([...best.values()].map((r) => r.taskId))
-  for (const id of reportTaskIds) {
-    if (knownIds.has(id)) continue
-    const fallback = TASK_META_BY_ID[id]
-    tasks.push({
-      id,
-      name: fallback?.name ?? id,
-      group: fallback?.group ?? "custom",
-      url: fallback?.url ?? "",
-      prompt: fallback?.prompt ?? "Complete the task successfully.",
-      successCriteria: fallback?.successCriteria ?? "Grader-verified completion.",
-      results: buildResultsForTask(id),
-    })
-  }
-
-  return { tasks, models, generatedAt: newestGenerated, sourceFile }
+// Public entry point: prefer raw results.jsonl, fall back to markdown reports.
+export async function loadBenchData(): Promise<BenchData> {
+  const fromResults = await loadResultsData()
+  if (fromResults) return fromResults
+  return loadReportData()
 }

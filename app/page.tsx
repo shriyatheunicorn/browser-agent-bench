@@ -5,6 +5,6 @@ import { loadBenchData } from "@/lib/report-loader"
 export const dynamic = "force-dynamic"
 
 export default async function Page() {
-  const { tasks, models, generatedAt } = await loadBenchData()
-  return <Dashboard tasks={tasks} models={models} generatedAt={generatedAt} />
+  const { tasks, models, generatedAt, sourceFile } = await loadBenchData()
+  return <Dashboard tasks={tasks} models={models} generatedAt={generatedAt} sourceFile={sourceFile} />
 }
