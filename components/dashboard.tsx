@@ -28,14 +28,18 @@ function formatGenerated(iso: string | null): string | null {
   if (!iso) return null
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return null
-  return d.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZoneName: "short",
-  })
+  // Pin to UTC so the server-rendered string always matches the client and
+  // never depends on the runtime's local timezone (avoids hydration mismatch).
+  return (
+    d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+    }) + " UTC"
+  )
 }
 
 export interface DashboardProps {
