@@ -1,0 +1,49 @@
+[
+  {
+    "label": "google/gemini-3-flash-preview",
+    "browserbaseModel": "google/gemini-3-flash-preview",
+    "browserUseModel": null,
+    "browserlessModel": null,
+    "notes": "Browser Use Cloud docs currently do not list a Gemini API model string."
+  },
+  {
+    "label": "google/gemini-3.1-pro-preview",
+    "browserbaseModel": "google/gemini-3.1-pro-preview",
+    "browserUseModel": null,
+    "browserlessModel": null,
+    "notes": "Unverified Browserbase model string; current Stagehand docs list google/gemini-3-pro-preview."
+  },
+  {
+    "label": "google/gemini-3.1-flash-lite-preview",
+    "browserbaseModel": "google/gemini-3.1-flash-lite-preview",
+    "browserUseModel": null,
+    "browserlessModel": null,
+    "notes": "Unverified Browserbase model string; Browser Use Cloud docs currently do not list a Gemini API model string."
+  },
+  {
+    "label": "openai/gpt-5.4",
+    "browserbaseModel": "openai/gpt-5.4",
+    "browserUseModel": null,
+    "browserlessModel": "gpt-5.4",
+    "notes": "Browser Use Cloud docs currently list gpt-5.4-mini but not gpt-5.4."
+  },
+  {
+    "label": "openai/gpt-5.4-mini",
+    "browserbaseModel": "openai/gpt-5.4-mini",
+    "browserUseModel": "gpt-5.4-mini",
+    "browserlessModel": "gpt-5.4-mini"
+  },
+  {
+    "label": "anthropic/claude-sonnet-4-6",
+    "browserbaseModel": "anthropic/claude-sonnet-4-6",
+    "browserUseModel": "claude-sonnet-4.6",
+    "browserlessModel": null
+  },
+  {
+    "label": "anthropic/claude-haiku-4-5-20251001",
+    "browserbaseModel": "anthropic/claude-haiku-4-5-20251001",
+    "browserUseModel": null,
+    "browserlessModel": null,
+    "notes": "Browser Use Cloud docs currently list Sonnet/Opus/GPT mini, not Haiku."
+  }
+]

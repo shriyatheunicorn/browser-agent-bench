@@ -1,0 +1,11 @@
+{
+  "name": "browser-agent-bench",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic browser-agent benchmark comparing Browserbase, Browser Use, and Browserless results.",
+  "type": "module",
+  "scripts": {
+    "compare": "node scripts/compare-results.mjs",
+    "eval": "node run-suite.mjs"
+  }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "label": "google/gemini-3-flash-preview",
+    "browserlessModel": null
+  },
+  {
+    "label": "openai/gpt-5.4-mini",
+    "browserlessModel": "gpt-5.4-mini"
+  },
+  {
+    "label": "anthropic/claude-sonnet-4-6",
+    "browserlessModel": null
+  }
+]

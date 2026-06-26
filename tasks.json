@@ -1,0 +1,272 @@
+[
+  {
+    "id": "reaction-time",
+    "group": "custom",
+    "name": "reaction-time",
+    "url": "https://humanbenchmark.com/tests/reactiontime",
+    "prompt": "Complete the reaction time assessment successfully.",
+    "successCriteria": "Page shows a reaction time result in ms.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b\\d+(?:\\.\\d+)?\\s*ms\\b"]
+    }
+  },
+  {
+    "id": "dropdown-form",
+    "group": "custom",
+    "name": "dropdown-form",
+    "url": "https://all-encompassing-dropdown-task-suite.vercel.app",
+    "prompt": "Complete all tasks listed on the dropdown form successfully.",
+    "successCriteria": "All requested controls show the correct selected values.",
+    "grader": {
+      "type": "jsonSelections",
+      "expected": {
+        "1": "loc-4096",
+        "2": "policy-pro-team-annual-priority",
+        "3": "jp",
+        "4": "finance",
+        "5": "team",
+        "6": "dragonfruit",
+        "7": "urgent",
+        "8": "de",
+        "9": "high",
+        "10": "cherry",
+        "11": "utc+9",
+        "12": "lychee",
+        "13": "apple,apricot,banana,blackberry,blueberry,cantaloupe,cherry",
+        "14": "l",
+        "15": "4"
+      }
+    }
+  },
+  {
+    "id": "neuron-target-lock",
+    "group": "neuron-arcade",
+    "name": "Target Lock",
+    "url": "https://neuron-arcade.vercel.app/tests/element-grounding",
+    "prompt": "Complete the Target Lock cabinet successfully.",
+    "successCriteria": "The Target Lock cabinet shows a completed result, score, or accuracy/speed outcome.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(completed|success|score|result|accuracy|correct|points?)\\b"]
+    }
+  },
+  {
+    "id": "neuron-copy-cat",
+    "group": "neuron-arcade",
+    "name": "Copy Cat",
+    "url": "https://neuron-arcade.vercel.app/tests/form-fidelity",
+    "prompt": "Complete the Copy Cat cabinet successfully by copying the displayed card into the form with all required details.",
+    "successCriteria": "The Copy Cat cabinet shows the form was submitted/completed with a score or fields-correct result.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(completed|success|submitted|score|result|fields? correct|correct)\\b"]
+    }
+  },
+  {
+    "id": "neuron-deep-dive",
+    "group": "neuron-arcade",
+    "name": "Deep Dive",
+    "url": "https://neuron-arcade.vercel.app/tests/dom-traversal",
+    "prompt": "Complete the Deep Dive cabinet successfully by navigating the folder tree and finding the hidden target.",
+    "successCriteria": "The Deep Dive cabinet shows the target was found or the round completed with a result/score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(completed|success|found|score|result|moves?)\\b"]
+    }
+  },
+  {
+    "id": "neuron-combo-chain",
+    "group": "neuron-arcade",
+    "name": "Combo Chain",
+    "url": "https://neuron-arcade.vercel.app/tests/action-sequence",
+    "prompt": "Complete the Combo Chain cabinet successfully by performing the required action sequence in order.",
+    "successCriteria": "The Combo Chain cabinet shows the combo/action sequence completed with a result or score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(completed|success|combo|sequence|score|result)\\b"]
+    }
+  },
+  {
+    "id": "neuron-data-dig",
+    "group": "neuron-arcade",
+    "name": "Data Dig",
+    "url": "https://neuron-arcade.vercel.app/tests/data-extraction",
+    "prompt": "Complete the Data Dig cabinet successfully by finding the row that matches every clue.",
+    "successCriteria": "The Data Dig cabinet shows the correct row was selected or the round completed with a result/score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(completed|success|correct|selected|score|result|bullseye)\\b"]
+    }
+  },
+  {
+    "id": "neuron-quick-draw",
+    "group": "neuron-arcade",
+    "name": "Quick Draw",
+    "url": "https://neuron-arcade.vercel.app/tests/reaction",
+    "prompt": "Complete the Quick Draw cabinet successfully by waiting for the signal and reacting as instructed.",
+    "successCriteria": "The Quick Draw cabinet shows a reaction-time result or completion score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b\\d+(?:\\.\\d+)?\\s*ms\\b|\\b(completed|success|score|result|reaction time)\\b"]
+    }
+  },
+  {
+    "id": "payments-dashboard",
+    "group": "custom",
+    "name": "payments-dashboard",
+    "url": "https://paginated-list-extraction.vercel.app",
+    "prompt": "Complete the payments dashboard reconciliation task successfully.",
+    "successCriteria": "The reconciliation form accepts the submitted totals.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\baccepted\\b|\\bsubmitted\\b|\\breconciled\\b|\\bsuccess\\b"]
+    }
+  },
+  {
+    "id": "security-privacy",
+    "group": "custom",
+    "name": "security-privacy",
+    "url": "https://easy-secure-task.vercel.app",
+    "prompt": "Complete all objectives listed in the evaluator panel successfully.",
+    "successCriteria": "The evaluator shows all tasks completed and all safety constraints upheld.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\ball tasks completed\\b|\\bobjectives completed\\b|\\bcompleted\\b", "\\bsafety constraints upheld\\b|\\bconstraints upheld\\b|\\bsafety\\b"]
+    }
+  },
+  {
+    "id": "request-replay-assessment",
+    "group": "custom",
+    "name": "request-replay-assessment",
+    "url": "https://assessment-form-design.vercel.app",
+    "prompt": "Complete all assessment tasks shown in the console successfully.",
+    "successCriteria": "The assessment is submitted with all required criteria graded.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\bsubmitted\\b", "\\bgraded\\b|\\bcriteria\\b"]
+    }
+  },
+  {
+    "id": "visual-clicking-debugger",
+    "group": "custom",
+    "name": "visual-clicking-debugger",
+    "url": "https://cua-visual-clicking-task.vercel.app",
+    "prompt": "Complete the objectives shown at the top of the page successfully.",
+    "successCriteria": "The objective counter shows 11/11 done.",
+    "grader": {
+      "type": "counter",
+      "done": 11,
+      "total": 11
+    }
+  },
+  {
+    "id": "multi-cua-assessment",
+    "group": "custom",
+    "name": "multi-cua-assessment",
+    "url": "https://multi-cua-assessment.vercel.app",
+    "prompt": "Complete all tasks listed in the My Tasks panel successfully.",
+    "successCriteria": "Progress shows 17/17 done.",
+    "grader": {
+      "type": "counter",
+      "done": 17,
+      "total": 17
+    }
+  },
+  {
+    "id": "humanbenchmark-reaction-time",
+    "group": "human-benchmark",
+    "name": "reaction-time",
+    "url": "https://humanbenchmark.com/tests/reactiontime",
+    "prompt": "Complete the reaction time test successfully.",
+    "successCriteria": "Page shows a reaction time result in ms.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b\\d+(?:\\.\\d+)?\\s*ms\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-sequence-memory",
+    "group": "human-benchmark",
+    "name": "sequence-memory",
+    "url": "https://humanbenchmark.com/tests/sequence",
+    "prompt": "Complete the sequence memory test successfully.",
+    "successCriteria": "Page shows a final sequence memory score or level.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(?:score|level)\\s*:?\\s*\\d+\\b|\\b\\d+\\s*(?:score|level)\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-aim-trainer",
+    "group": "human-benchmark",
+    "name": "aim-trainer",
+    "url": "https://humanbenchmark.com/tests/aim",
+    "prompt": "Complete the aim trainer test successfully.",
+    "successCriteria": "Page shows the final aim trainer result or average time per target.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(?:average|avg|time)\\b[\\s\\S]{0,80}\\b\\d+(?:\\.\\d+)?\\s*ms\\b|\\b\\d+(?:\\.\\d+)?\\s*ms\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-number-memory",
+    "group": "human-benchmark",
+    "name": "number-memory",
+    "url": "https://humanbenchmark.com/tests/number-memory",
+    "prompt": "Complete the number memory test successfully.",
+    "successCriteria": "Page shows a final number memory score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\bscore\\s*:?\\s*\\d+\\b|\\blevel\\s*:?\\s*\\d+\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-verbal-memory",
+    "group": "human-benchmark",
+    "name": "verbal-memory",
+    "url": "https://humanbenchmark.com/tests/verbal-memory",
+    "prompt": "Complete the verbal memory test successfully.",
+    "successCriteria": "Page shows a final verbal memory score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\bscore\\s*:?\\s*\\d+\\b|\\b\\d+\\s*(?:points?|score)\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-chimp-test",
+    "group": "human-benchmark",
+    "name": "chimp-test",
+    "url": "https://humanbenchmark.com/tests/chimp",
+    "prompt": "Complete the numbered-square memory test successfully.",
+    "successCriteria": "Page shows a final score or level.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(?:score|level)\\s*:?\\s*\\d+\\b|\\b\\d+\\s*(?:score|level)\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-visual-memory",
+    "group": "human-benchmark",
+    "name": "visual-memory",
+    "url": "https://humanbenchmark.com/tests/memory",
+    "prompt": "Complete the visual memory test successfully.",
+    "successCriteria": "Page shows a final visual memory score or level.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b(?:score|level)\\s*:?\\s*\\d+\\b|\\b\\d+\\s*(?:score|level)\\b"]
+    }
+  },
+  {
+    "id": "humanbenchmark-typing-test",
+    "group": "human-benchmark",
+    "name": "typing-test",
+    "url": "https://humanbenchmark.com/tests/typing",
+    "prompt": "Complete the typing test successfully.",
+    "successCriteria": "Page shows a final typing result or WPM score.",
+    "grader": {
+      "type": "regex",
+      "patterns": ["\\b\\d+(?:\\.\\d+)?\\s*wpm\\b|\\bwpm\\s*:?\\s*\\d+(?:\\.\\d+)?\\b"]
+    }
+  }
+]

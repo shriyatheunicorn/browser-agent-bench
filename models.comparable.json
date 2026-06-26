@@ -1,0 +1,20 @@
+[
+  {
+    "label": "openai/gpt-5.4-mini",
+    "browserbaseModel": "openai/gpt-5.4-mini",
+    "browserUseModel": "gpt-5.4-mini",
+    "browserlessModel": "gpt-5.4-mini"
+  },
+  {
+    "label": "anthropic/claude-sonnet-4-6",
+    "browserbaseModel": "anthropic/claude-sonnet-4-6",
+    "browserUseModel": "claude-sonnet-4.6",
+    "browserlessModel": null
+  },
+  {
+    "label": "anthropic/claude-opus-4-6",
+    "browserbaseModel": "anthropic/claude-opus-4-6",
+    "browserUseModel": "claude-opus-4.6",
+    "browserlessModel": null
+  }
+]
