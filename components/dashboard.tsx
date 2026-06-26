@@ -335,7 +335,7 @@ function Hero({
         </p>
       )}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} />
+        <HeroStat icon={Target} label="Tasks graded" value={String(tasks.length)} href="/tasks" sub="Try the tasks" />
         <HeroStat icon={Zap} label="Task families" value="3" sub="arcade · custom · human" />
         <HeroStat icon={Activity} label="Providers" value="3" sub="head-to-head" />
       </div>
@@ -348,19 +348,37 @@ function HeroStat({
   label,
   value,
   sub,
+  href,
 }: {
   icon: typeof Target
   label: string
   value: string
   sub?: string
+  href?: string
 }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-4">
+  const inner = (
+    <>
       <Icon className="h-4 w-4 text-primary" />
       <div className="mt-3 font-mono text-2xl font-bold tabular-nums">{value}</div>
-      <div className="text-xs text-muted-foreground">{sub ?? label}</div>
-    </div>
+      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        {sub ?? label}
+        {href && <ArrowUpRight className="h-3 w-3" />}
+      </div>
+    </>
   )
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="group rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary hover:bg-muted/40"
+      >
+        {inner}
+      </Link>
+    )
+  }
+
+  return <div className="rounded-xl border border-border bg-card p-4">{inner}</div>
 }
 
 function BrowserbaseStrengths({
