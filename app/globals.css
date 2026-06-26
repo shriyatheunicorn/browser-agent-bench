@@ -22,42 +22,59 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-  --radius: 0.625rem;
+  --radius: 0.5rem;
 }
 
 :root {
-  --background: oklch(0.16 0.006 50);
-  --foreground: oklch(0.97 0.005 80);
-  --card: oklch(0.2 0.007 55);
-  --card-foreground: oklch(0.97 0.005 80);
-  --muted: oklch(0.27 0.008 55);
-  --muted-foreground: oklch(0.68 0.01 60);
-  --border: oklch(0.3 0.008 55);
+  /* Browserbase light brand */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.18 0.012 260);
+  --card: oklch(0.965 0.006 260);
+  --card-foreground: oklch(0.18 0.012 260);
+  --muted: oklch(0.945 0.007 260);
+  --muted-foreground: oklch(0.5 0.012 260);
+  --border: oklch(0.9 0.008 260);
 
   /* Browserbase orange */
-  --primary: oklch(0.66 0.21 38);
-  --primary-foreground: oklch(0.99 0.005 80);
-  --accent: oklch(0.27 0.008 55);
-  --accent-foreground: oklch(0.97 0.005 80);
+  --primary: oklch(0.63 0.244 33);
+  --primary-foreground: oklch(0.99 0.01 60);
+  --accent: oklch(0.95 0.02 50);
+  --accent-foreground: oklch(0.18 0.012 260);
 
-  /* provider colors */
-  --bb: oklch(0.66 0.21 38);
-  --bu: oklch(0.72 0.13 215);
-  --bl: oklch(0.78 0.15 145);
+  /* provider colors tuned for light backgrounds */
+  --bb: oklch(0.63 0.244 33);
+  --bu: oklch(0.55 0.17 255);
+  --bl: oklch(0.53 0.12 175);
 
-  --pass: oklch(0.72 0.16 150);
-  --fail: oklch(0.6 0.19 25);
+  --pass: oklch(0.54 0.14 158);
+  --fail: oklch(0.57 0.21 27);
 }
 
 @layer base {
   * {
     border-color: var(--border);
   }
+  html {
+    background-color: var(--background);
+  }
   body {
     background-color: var(--background);
     color: var(--foreground);
     -webkit-font-smoothing: antialiased;
   }
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+/* Orange highlighter span, like browserbase.com headings */
+.bb-mark {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0 0.18em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 @keyframes growBar {

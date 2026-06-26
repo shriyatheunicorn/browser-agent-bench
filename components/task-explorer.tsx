@@ -43,7 +43,9 @@ export function TaskExplorer() {
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
       <header className="border-b border-border pb-8">
-        <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">Try the benchmark tasks</h1>
+        <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+          Try the <span className="bb-mark">benchmark tasks</span>
+        </h1>
         <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
           These are the exact live environments the agents are graded on. Pick a task, read the prompt the agent
           receives, then run it yourself to feel what makes it hard.

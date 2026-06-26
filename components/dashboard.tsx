@@ -170,14 +170,14 @@ function Hero() {
   const miniBB = statsFor("browserbase", "openai/gpt-5.4-mini")
   return (
     <section className="border-b border-border py-14 sm:py-20">
-      <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
+      <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
         <Activity className="h-3.5 w-3.5 text-primary" />
         Deterministic browser-agent benchmark
       </div>
-      <h1 className="mt-5 max-w-3xl text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-        How <span className="text-primary">Browserbase</span> agents perform under real pressure.
+      <h1 className="mt-6 max-w-4xl text-balance text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
+        How <span className="bb-mark">Browserbase</span> agents perform under real pressure.
       </h1>
-      <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
+      <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
         A code-graded suite of 21 browser tasks run across providers and models. No self-reported success, no LLM
         judge — every pass is verified by a deterministic grader.
       </p>
