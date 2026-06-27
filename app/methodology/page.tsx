@@ -28,50 +28,21 @@ export default function MethodologyPage() {
           This browser agent task set is designed to be{" "}
           <span className="font-medium text-foreground">100% verifiable</span> in the practical and reproducible sense:
           every task has an externally checkable success condition, a deterministic grader, and inspectable artifacts,
-          so the benchmark does not need to trust an agent&apos;s self-report or an LLM judge.
+          so the benchmark does not need to rely on agentic self-reporting or an LLMj. Users can interact with the same
+          tasks if curious.
         </p>
       </aside>
 
       <div className="mt-12 flex flex-col gap-12">
-        {/* Core principle */}
-        <Section icon={FileSearch} title="The core principle">
-          <p>
-            Success is tied to structured evidence: selected dropdown values, visible scores, counters, completion
-            states, exact text, run logs, and saved provider artifacts. The guiding rule is simple —{" "}
-            <span className="font-medium text-foreground">
-              the agent may act freely, but the evaluator only scores independently recoverable evidence
-            </span>
-            .
-          </p>
-          <p>
-            This follows the direction of current verifier research: reliable computer-use evaluation requires more than
-            a final answer. It needs task-specific criteria, clear separation of process and outcome, and deterministic
-            trajectory inspection.{" "}
-            <em>The Art of Building Verifiers for Computer Use Agents</em> argues that CUA evaluation depends on
-            meaningful rubrics, process/outcome separation, controllable-vs-uncontrollable failure analysis, and
-            attention to full screenshot/action evidence, because final claims alone are not trustworthy.
-          </p>
-          <p>
-            The most direct evidence is the Berkeley RDI study by Wang, Mang, Cheung, Sen, and Song (April 2026),{" "}
-            <em>How We Broke Top AI Agent Benchmarks</em>. The authors built an automated exploit agent and drove eight
-            of the field&apos;s most cited agent benchmarks (this included SWE-bench Verified, SWE-bench Pro, WebArena,
-            OSWorld, GAIA, and Terminal-Bench) to near-perfect scores{" "}
-            <span className="font-medium text-foreground">without solving a single task</span>, in most cases without
-            making a single model call. A ten-line <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">conftest.py</code>{" "}
-            &ldquo;resolved&rdquo; every SWE-bench Verified instance, and a one-character message scored 100% on all 890
-            FieldWorkArena tasks. This is because its validator only checks that the last message came from the assistant.
-          </p>
-        </Section>
-
-        {/* Task Design */}
+{/* Task Design */}
         <Section icon={ShieldCheck} title="Task design">
           <p>
-            Success is tied to structured evidence on a binary pass or fail.
+            Success is tied to a binary grading mark of pass or fail.
           </p>
         </Section>
 
-        {/* Against evaluation hacking */}
-        <Section icon={Lock} title="Designed against evaluation hacking">
+        {/* Against reward hacking */}
+        <Section icon={Lock} title="Tasks designed against reward hacking">
           <p>
             The task metadata and expected answers live in the harness, not in the browser page the agent is solving.
             Grading happens after the run from recorded outputs and artifacts, and the result is computed by code rather
