@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 const links = [
   { href: "/", label: "Benchmark" },
   { href: "/tasks", label: "Try Tasks" },
+  { href: "/methodology", label: "Methodology" },
 ]
 
 export function SiteNav() {
