@@ -15,12 +15,7 @@ export default function MethodologyPage() {
         <h1 className="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
           Verifiable <span className="bb-mark">by construction</span>
         </h1>
-        <p className="mt-4 text-pretty leading-relaxed text-muted-foreground">
-          This browser agent task set is designed to be{" "}
-          <span className="font-medium text-foreground">100% verifiable</span> in the practical and reproducible sense:
-          every task has an externally checkable success condition, a deterministic grader, and inspectable artifacts,
-          so the benchmark does not need to trust an agent&apos;s self-report or an LLM judge.
-        </p>
+
       </header>
 
       {/* In-short callout */}
@@ -30,9 +25,10 @@ export default function MethodologyPage() {
           <span className="font-mono text-xs font-semibold uppercase tracking-widest text-primary">In short</span>
         </div>
         <p className="mt-3 text-pretty leading-relaxed text-foreground">
-          This framework is reliable because it converts web-agent behavior into varied, independent, and checkable
-          evidence. It is reproducible because the tasks, graders, provider configs, raw artifacts, and reports are all
-          explicit.
+          This browser agent task set is designed to be{" "}
+          <span className="font-medium text-foreground">100% verifiable</span> in the practical and reproducible sense:
+          every task has an externally checkable success condition, a deterministic grader, and inspectable artifacts,
+          so the benchmark does not need to trust an agent&apos;s self-report or an LLM judge.
         </p>
       </aside>
 
@@ -58,37 +54,19 @@ export default function MethodologyPage() {
           <p>
             The most direct evidence is the Berkeley RDI study by Wang, Mang, Cheung, Sen, and Song (April 2026),{" "}
             <em>How We Broke Top AI Agent Benchmarks</em>. The authors built an automated exploit agent and drove eight
-            of the field&apos;s most cited agent benchmarks — including SWE-bench Verified, SWE-bench Pro, WebArena,
-            OSWorld, GAIA, and Terminal-Bench — to near-perfect scores{" "}
+            of the field&apos;s most cited agent benchmarks (this included SWE-bench Verified, SWE-bench Pro, WebArena,
+            OSWorld, GAIA, and Terminal-Bench) to near-perfect scores{" "}
             <span className="font-medium text-foreground">without solving a single task</span>, in most cases without
             making a single model call. A ten-line <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">conftest.py</code>{" "}
-            &ldquo;resolves&rdquo; every SWE-bench Verified instance, and a one-character message (
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">{"{}"}</code>) scores 100% on all 890
-            FieldWorkArena tasks — because its validator only checks that the last message came from the assistant.
-            Navigating Chromium to a <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">file://</code>{" "}
-            URL reads WebArena&apos;s gold answers straight off disk.
+            &ldquo;resolved&rdquo; every SWE-bench Verified instance, and a one-character message scored 100% on all 890
+            FieldWorkArena tasks. This is because its validator only checks that the last message came from the assistant.
           </p>
         </Section>
 
         {/* Task Design */}
         <Section icon={ShieldCheck} title="Task design">
           <p>
-            A task passes only if the grader finds the expected observable state: for example, exact dropdown
-            selections, <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">11/11</code>,{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">8/8</code>, a reaction-time{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">ms</code> value, a cleared game state,
-            or a required completion message. That makes the benchmark closer to an evidence-chain evaluation than a
-            simple accuracy leaderboard.{" "}
-            <a
-              href="https://arxiv.org/html/2605.08888v1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-primary underline underline-offset-4 hover:no-underline"
-            >
-              DocScope
-            </a>{" "}
-            makes the same methodological point — that answer accuracy alone cannot substitute for trajectory-level
-            evaluation, and even correct answers often lack complete evidence chains.
+            Success is tied to structured evidence on a binary pass or fail.
           </p>
         </Section>
 
@@ -106,14 +84,21 @@ export default function MethodologyPage() {
         {/* Reproducibility */}
         <Section icon={Repeat} title="Reproducibility through standardization">
           <p>
-            Reproducibility comes from standardization: the same{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">tasks.json</code>, same provider
-            matrix, same model labels, same timeout settings, same raw{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">results.jsonl</code>, and same report
-            generator can be rerun across Browserbase, Browser Use, and Browserless. This follows the spirit of
-            SWE-Marathon, which uses unique executable environments, human-written reference solutions, multi-layer
-            verification, adversarial review, and released trajectories to make long-horizon agent evaluation more
-            robust.
+            A task passes only if the grader finds the expected observable state: for example, exact dropdown
+            selections, <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">11/11</code>,{" "}
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">8/8</code>, a reaction-time{" "}
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">ms</code> value, a cleared win/lose game state,
+            or a required completion message. This benchmark reflects evidence-based evaluations, and a leaderboard with reproducible numbers.{" "}
+            <a
+              href="https://arxiv.org/html/2605.08888v1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-primary underline underline-offset-4 hover:no-underline"
+            >
+              DocScope
+            </a>{" "}
+            makes the same methodological point, in that answer accuracy alone cannot substitute for trajectory-level
+            evaluation, and even correct answers often lack complete evidence chains.
           </p>
         </Section>
       </div>
