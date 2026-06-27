@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowUpRight, ShieldCheck, FileSearch, Lock, Repeat } from "lucide-react"
+import { ArrowUpRight, ShieldCheck, FileSearch, Lock, Repeat, BookOpen, ChevronDown } from "lucide-react"
 
 export const metadata = {
   title: "Methodology — Browserbase Bench",
@@ -139,9 +139,74 @@ export default function MethodologyPage() {
           </Link>
         </div>
       </div>
+
+      <details className="group mt-6 rounded-xl border border-border bg-card">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-6 [&::-webkit-details-marker]:hidden">
+          <span className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
+              <BookOpen className="h-4 w-4 text-primary" />
+            </span>
+            <span className="text-lg font-semibold tracking-tight">Sources</span>
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
+        </summary>
+        <ol className="flex flex-col gap-4 border-t border-border px-6 py-5 text-sm leading-relaxed text-muted-foreground">
+          {SOURCES.map((s) => (
+            <li key={s.href} className="flex flex-col gap-0.5">
+              <span>
+                {s.citation}{" "}
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all font-medium text-primary underline underline-offset-4 hover:no-underline"
+                >
+                  {s.href}
+                </a>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </details>
     </main>
   )
 }
+
+const SOURCES = [
+  {
+    citation:
+      "Bordes, F., et al. (2025). Eval Factsheets: A Structured Framework for Documenting AI Evaluations. arXiv:2512.04062.",
+    href: "https://arxiv.org/abs/2512.04062",
+  },
+  {
+    citation: "Desai, R. (2026). Designing eval harnesses that prevent reward hacking.",
+    href: "https://www.rishidesai.org/posts/task-design/",
+  },
+  {
+    citation:
+      "Desai, R., et al. (2026). SWE-Marathon: Can Agents Autonomously Complete Ultra-Long-Horizon Software Work? arXiv:2606.07682.",
+    href: "https://www.swe-marathon.org/",
+  },
+  {
+    citation:
+      "Feng, X., et al. (2026). DocScope: Benchmarking Verifiable Reasoning for Trustworthy Long-Document Understanding. arXiv:2605.08888.",
+    href: "https://arxiv.org/html/2605.08888v1",
+  },
+  {
+    citation:
+      "Rosset, C., Sharma, P., Zhao, A., Gonzalez-Fernandez, M., & Awadallah, A. (2026). The Art of Building Verifiers for Computer Use Agents. arXiv:2604.06240.",
+    href: "https://arxiv.org/abs/2604.06240",
+  },
+  {
+    citation:
+      "Wang, H., Mang, Q., Cheung, A., Sen, K., & Song, D. (2026). How We Broke Top AI Agent Benchmarks: And What Comes Next. Berkeley RDI.",
+    href: "https://rdi.berkeley.edu/blog/trustworthy-benchmarks-cont/",
+  },
+  {
+    citation: "Browserbase Bench. Verifiable browser agent benchmark.",
+    href: "https://browser-agent-bench.vercel.app/",
+  },
+]
 
 function Section({
   icon: Icon,
