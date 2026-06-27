@@ -78,8 +78,17 @@ export default function MethodologyPage() {
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">8/8</code>, a reaction-time{" "}
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">ms</code> value, a cleared game state,
             or a required completion message. That makes the benchmark closer to an evidence-chain evaluation than a
-            simple accuracy leaderboard. DocScope makes the same methodological point — that answer accuracy alone cannot
-            substitute for trajectory-level evaluation, and even correct answers often lack complete evidence chains.
+            simple accuracy leaderboard.{" "}
+            <a
+              href="https://arxiv.org/html/2605.08888v1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-primary underline underline-offset-4 hover:no-underline"
+            >
+              DocScope
+            </a>{" "}
+            makes the same methodological point — that answer accuracy alone cannot substitute for trajectory-level
+            evaluation, and even correct answers often lack complete evidence chains.
           </p>
         </Section>
 
